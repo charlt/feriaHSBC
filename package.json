@@ -28,6 +28,7 @@
         "@nestjs/platform-express": "^7.5.1",
         "@nestjs/swagger": "^4.7.13",
         "@nestjs/typeorm": "^7.1.5",
+        "moment": "^2.29.1",
         "mongodb": "^3.6.4",
         "mongoose": "^5.11.16",
         "reflect-metadata": "^0.1.13",

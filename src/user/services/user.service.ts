@@ -4,10 +4,16 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from '../schemas/user.schema';
 import { Iuser } from '../interfaces/user.interface';
 const ObjectId = require('mongodb').ObjectId;
+import {  StatisticService} from '../../statistics/services/statistic.service';
+import { eTypeStatistics } from '../../statistics/enums/type.enum';
+
+import { Istatistic } from '../../statistics/interfaces/statistic.interface';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) { }
+  constructor(
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    private readonly statisticService: StatisticService) { }
 /**
  * Función encargada de guardar un usuario
  * 
@@ -16,7 +22,13 @@ export class UserService {
   async save(user: Iuser) {
     try {
       const createdUser = new this.userModel(user);
-      return await createdUser.save();
+      let userSaved= await createdUser.save();
+      let statistic:Istatistic={
+        type:eTypeStatistics.registro,
+        userId:userSaved._id
+      }
+      await this.statisticService.save(statistic);
+      return userSaved;
     } catch (error) {
       let message = error._message ?? error.toString()
       return { error: message }

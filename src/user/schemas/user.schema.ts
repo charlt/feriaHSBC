@@ -9,7 +9,7 @@ export class User {
   name: string;
   @Prop({ required: true })
   lastName: string;
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   phone: string;
   @Prop({ required: true })
   department: string;
@@ -19,9 +19,9 @@ export class User {
   password: string;
   @Prop({ required: true })
   job: string;
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   email: string;
-  @Prop({ default:Date.now })
+  @Prop({ default: Date.now })
   createdAt: Date;
 
 }

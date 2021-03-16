@@ -1,3 +1,4 @@
+import { StatisticModule } from './statistics/statistic.module';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -8,13 +9,14 @@ import { ContactsModule } from './contacts/contacts.module';
 @Module({
   //TODO: Variable de entorno db
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017/hsbcFeria',{
-      useNewUrlParser:true
+    StatisticModule,
+    MongooseModule.forRoot('mongodb://localhost:27017/hsbcFeria', {
+      useNewUrlParser: true
     }),
     UserModule,
     ContactsModule
-],
+  ],
   controllers: [AppController],
-  providers: [AppService,UserModule],
+  providers: [AppService, UserModule],
 })
-export class AppModule {}
+export class AppModule { }
