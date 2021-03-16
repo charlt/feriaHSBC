@@ -19,6 +19,8 @@ export class User {
   password: string;
   @Prop({ required: true })
   job: string;
+  @Prop({ required: true })
+  email: string;
   @Prop({ default:Date.now })
   createdAt: Date;
 
