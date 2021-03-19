@@ -1,6 +1,7 @@
-import { Controller, Post, Get, Body,Put, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Get, Body,Put, Res, HttpStatus, Param } from '@nestjs/common';
 import { StatisticService } from './services/statistic.service';
 import { StatisticDto } from './dto/statistic.dto';
+import { get } from 'http';
 
 @Controller('statistics')
 export class StatisticController {
@@ -54,5 +55,32 @@ export class StatisticController {
         })
       }
     }
+
+    @Get('/:type/:temporality')
+    async getStatistics(@Res() res, @Param('type') type, @Param('temporality') temporality?): Promise<any> {
+      try {
+        let statistics: any = await this.statisticService.getStatistics(type,temporality);
+        if(!statistics.error){
+          return res.status(HttpStatus.OK).json({
+            message: 'Statistic succesfully consulted',
+            statistics,
+            statusCode:200
+          })
+        }else{
+          return res.status(HttpStatus.BAD_REQUEST).json({
+            message: statistics.error,
+            statusCode:400     
+          })
+        }
+      } catch (error) {
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+          message: 'A ocurrido un error inesperado',
+          statusCode:400
+        })
+      }
+    }
+
+   
+
     
  }

@@ -1,8 +1,12 @@
 import { Injectable, Get } from '@nestjs/common';
-import { Model } from 'mongoose';
+import { Aggregate, Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Statistic, StatisticDocument } from '../schema/statistic.schema';
 import { Istatistic } from '../interfaces/statistic.interface';
+import { Db } from 'mongodb';
+import { eTypeStatistics,eTypeGenders,eTypeTemporalities } from '../enums/type.enum';
+
+import { count } from 'console';
 const ObjectId = require('mongodb').ObjectId;
 let moment= require('moment');
 @Injectable()
@@ -43,5 +47,91 @@ export class StatisticService {
         }
     }
 
+       
+    async getStatistics(type:string, temporality:string): Promise<any> {
+        try {
+            let query:any[];
+            let countg:any;
+            let resultado: any[]=[];
+            switch (type) {
+                case eTypeStatistics.loginByGender:
+                 if(temporality==eTypeTemporalities.all){   
+                //   
+                 for(const i of Object.values(eTypeGenders)) {
+                     
+                    query=[{$lookup:{ from:'users',localField:'userId',foreignField:'_id',as:'users'}},{$match:{type:'Login','users.gender':i}}];
+                   countg= await this.statisticModel.aggregate(query);
+                   let objeto:any={type:i,count:countg.length}
+                   resultado.push(objeto);
 
+                  }}
+                  if(temporality==eTypeTemporalities.day){   
+                    //   
+                     for(const i of Object.values(eTypeGenders)) {
+                         
+                        query= [{$lookup:{ from:'users',localField:'userId',foreignField:'_id',as:'users'}},{$match:{type:'Login','users.gender':i}},{$group: { _id :{ $dayOfMonth:"$createdAt"},count:{$sum:1}}}];
+                       countg= await this.statisticModel.aggregate(query);
+                       let objeto:any={type:i,countg}
+                       resultado.push(objeto);
+    
+                      }}
+                                
+                  return resultado;
+                    break;
+
+                    case eTypeStatistics.statisticsLogin:
+                        if(temporality==eTypeTemporalities.all){   
+                          query=[{$lookup:{ from:'users',localField:'userId',foreignField:'_id',as:'users'}},{$match:{type:'Login'}}];
+                          countg= await this.statisticModel.aggregate(query);
+                          let objeto:any={LoginsTotales:countg.length}
+                          resultado.push(objeto);
+       
+                         }
+                        if(temporality==eTypeTemporalities.day){   
+                       
+                          
+                                
+                               query= [{$lookup:{ from:'users',localField:'userId',foreignField:'_id',as:'users'}},{$match:{type:'Login'}},{$group: { _id :{ $dayOfMonth:"$createdAt"},count:{$sum:1}}}];
+                              countg= await this.statisticModel.aggregate(query);
+                              let objeto:any={LoginsPorDia:countg}
+                              resultado.push(objeto);
+           
+                             }
+                                       
+                         return resultado;
+                           break;
+
+                           case eTypeStatistics.statisticsRegistro:
+                            if(temporality==eTypeTemporalities.all){   
+                              query=[{$lookup:{ from:'users',localField:'userId',foreignField:'_id',as:'users'}},{$match:{type:'Registro'}}];
+                              countg= await this.statisticModel.aggregate(query);
+                              let objeto:any={RegistrosTotales:countg.length}
+                              resultado.push(objeto);
+           
+                             }
+                            if(temporality==eTypeTemporalities.day){   
+                           
+                              
+                                    
+                                   query= [{$lookup:{ from:'users',localField:'userId',foreignField:'_id',as:'users'}},{$match:{type:'Registro'}},{$group: { _id :{ $dayOfMonth:"$createdAt"},count:{$sum:1}}}];
+                                  countg= await this.statisticModel.aggregate(query);
+                                  let objeto:any={RegistrosPorDia:countg}
+                                  resultado.push(objeto);
+               
+                                 }
+                                           
+                             return resultado;
+                               break;
+
+                default:
+                    return { error: 'Resource not found' };
+                   break;
+            }
+             
+        } catch (error) {
+            let message = error._message ?? error.toString()
+            return { error: message }
+        }
+
+    }
 }
