@@ -12,10 +12,12 @@ export class StatisticController {
       try {
         let statistic: any = await this.statisticService.save(statisticDto);
         if(!statistic.error){
+         
           return res.status(HttpStatus.OK).json({
             message: 'Statistic succesfully created',
             statistic,
             statusCode:200
+
           })
         }else{
           return res.status(HttpStatus.BAD_REQUEST).json({
@@ -57,7 +59,7 @@ export class StatisticController {
     }
 
     @Get('/:type/:temporality')
-    async getStatistics(@Res() res, @Param('type') type, @Param('temporality') temporality?): Promise<any> {
+    async getStatistics(@Res() res, @Param('type') type, @Param('temporality') temporality): Promise<any> {
       try {
         let statistics: any = await this.statisticService.getStatistics(type,temporality);
         if(!statistics.error){
