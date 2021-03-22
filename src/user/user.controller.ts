@@ -1,6 +1,7 @@
-import { Controller, Post, Get, Body, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Get, Body, Res, HttpStatus, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from './services/user.service';
 import { UserDto } from './dto/user.dto';
+import { Login } from './dto/login.dto';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
@@ -54,6 +55,30 @@ export class UserController {
       })
     }
 
+  }
+
+
+  /**
+ *
+ * 
+ * 
+ */
+  @Post('login')
+  @UsePipes(ValidationPipe)
+  async login(@Body() signinDto: Login, @Res() res) {
+    try {
+      let token: any = await this.userService.login(signinDto);
+      return res.status(HttpStatus.OK).json({
+        message: 'success',
+        data: token,
+        statusCode: 200
+      })
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: 'A ocurrido un error inesperado',
+        statusCode: 400
+      })
+    }
   }
 
 
