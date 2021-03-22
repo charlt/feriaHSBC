@@ -5,19 +5,21 @@ import { Statistic, StatisticDocument } from '../schema/statistic.schema';
 import { Istatistic } from '../interfaces/statistic.interface';
 import { Db } from 'mongodb';
 import { eTypeStatistics, eTypeGenders, eTypeTemporalities } from '../enums/type.enum';
-
+g
 import { count } from 'console';
 const ObjectId = require('mongodb').ObjectId;
 let moment = require('moment');
 @Injectable()
 export class StatisticService {
-
     constructor(@InjectModel(Statistic.name) private statisticModel: Model<StatisticDocument>) { }
-
-    async save(statistic: Istatistic): Promise<any> {
+    
+    async save(userId:string, statistic: any): Promise<any> {
         try {
-            statistic.userId = ObjectId(statistic.userId);
-            const createdstatistic = new this.statisticModel(statistic);
+            let statisticToSave:Istatistic={
+                type:statistic.type,
+                userId:ObjectId(userId)
+            }
+            const createdstatistic = new this.statisticModel(statisticToSave);
             return await createdstatistic.save();
         } catch (error) {
             let message = error._message ?? error.toString()

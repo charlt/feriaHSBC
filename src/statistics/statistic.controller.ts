@@ -1,26 +1,32 @@
-import { Controller, Post, Get, Body, Put, Res, HttpStatus, Param } from '@nestjs/common';
+import { Controller, Post, Get, Body,Put, Res, HttpStatus, UseGuards, Req } from '@nestjs/common';
 import { StatisticService } from './services/statistic.service';
 import { StatisticDto } from './dto/statistic.dto';
-import { get } from 'http';
-
+import { AuthGuard } from '@nestjs/passport';
 @Controller('statistics')
 export class StatisticController {
 
-  constructor(private readonly statisticService: StatisticService) { }
-  @Post('/create')
-  async saveStatistic(@Res() res, @Body() statisticDto: StatisticDto): Promise<any> {
-    try {
-      let statistic: any = await this.statisticService.save(statisticDto);
-      if (!statistic.error) {
-        return res.status(HttpStatus.OK).json({
-          message: 'Statistic succesfully created',
-          statistic,
-          statusCode: 200
-        })
-      } else {
-        return res.status(HttpStatus.BAD_REQUEST).json({
-          message: statistic.error,
-          statusCode: 400
+    constructor(private readonly statisticService: StatisticService) { }
+    @Post('/create')
+    @UseGuards(AuthGuard('jwt'))
+    async saveStatistic(@Req() req: any,@Res() res, @Body() statisticDto: StatisticDto): Promise<any> {
+      try {
+        let statistic: any = await this.statisticService.save(req.user.userId,statisticDto);
+        if(!statistic.error){
+          return res.status(HttpStatus.OK).json({
+            message: 'Statistic succesfully created',
+            statistic,
+            statusCode:200
+          })
+        }else{
+          return res.status(HttpStatus.BAD_REQUEST).json({
+            message: statistic.error,
+            statusCode:400     
+          })
+        }
+      } catch (error) {
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+          message: 'A ocurrido un error inesperado',
+          statusCode:400
         })
       }
     } catch (error) {
