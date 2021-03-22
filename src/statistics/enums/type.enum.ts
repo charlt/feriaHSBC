@@ -5,7 +5,6 @@ export enum eTypeStatistics {
     loginByGender='loginByGender',
     statisticsLogin='statisticsLogin',
     statisticsRegistro='statisticsRegistro'
-
 }
 
 export enum eTypeTemporalities {
@@ -14,9 +13,8 @@ export enum eTypeTemporalities {
 }
 
 export enum eTypeGenders{
-h='H',
-m='M',
-na='NA'
-
+    h='H',
+    m='M',
+    na='NA'
 }
 
