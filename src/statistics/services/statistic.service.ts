@@ -5,7 +5,7 @@ import { Statistic, StatisticDocument } from '../schema/statistic.schema';
 import { Istatistic } from '../interfaces/statistic.interface';
 import { Db } from 'mongodb';
 import { eTypeStatistics, eTypeGenders, eTypeTemporalities } from '../enums/type.enum';
-g
+
 import { count } from 'console';
 const ObjectId = require('mongodb').ObjectId;
 let moment = require('moment');
