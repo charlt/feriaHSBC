@@ -8,6 +8,7 @@ export class UserController {
   @Post('/create')
   async saveUser(@Res() res, @Body() userDto: UserDto): Promise<any> {
     try {
+      
       let user: any = await this.userService.save(userDto);
       if (!user.error) {
         return res.status(HttpStatus.OK).json({
@@ -24,7 +25,7 @@ export class UserController {
         index != -1 ? message = 'Este email ya ha sido registrado' : null;
         index2 != -1 ? message = 'Este número telefonico ya ha sido registrado' : null;
 
-        return res.status(HttpStatus.BAD_REQUEST).json({
+        return res.status(HttpStatus.OK).json({
           message: message != undefined ? message : user.error,
           statusCode: 400
         })
@@ -68,11 +69,19 @@ export class UserController {
   async login(@Body() signinDto: Login, @Res() res) {
     try {
       let token: any = await this.userService.login(signinDto);
-      return res.status(HttpStatus.OK).json({
-        message: 'success',
-        data: token,
-        statusCode: 200
-      })
+      if(!token.error){
+        return res.status(HttpStatus.OK).json({
+          message: 'success',
+          data: token,
+          statusCode: 200
+        })
+      }else{
+        return res.status(HttpStatus.OK).json({
+          message: token.error,
+          statusCode: 400
+        })
+      }
+
     } catch (error) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: 'A ocurrido un error inesperado',
