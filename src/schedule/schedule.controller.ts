@@ -3,14 +3,13 @@ import { ScheduleService } from './services/Schedule.service';
 import { ScheduleDto } from './dto/Schedule.dto';
 
 @Controller('schedule')
-@Controller()
 export class ScheduleController {
 
     constructor(private readonly scheduleService: ScheduleService) { }
     @Post('/create')
     async saveSchedule(@Req() req: any, @Res() res, @Body() scheduleDto: ScheduleDto): Promise<any> {
       try {
-        let schedule: any = await this.scheduleService.save(req.user.Id, scheduleDto);
+        let schedule: any = await this.scheduleService.save(scheduleDto);
         if (!schedule.error) {
           return res.status(HttpStatus.OK).json({
             message: 'schedule succesfully created',
@@ -31,34 +30,11 @@ export class ScheduleController {
       }
     }
   
-    @Put()
-    async updateSchedule(@Res() res, @Body() scheduleObject: any): Promise<any> {
+   
+    @Get('/:type')
+    async getSchedule(@Res() res, @Param('type') type): Promise<any> {
       try {
-        let schedule: any = await this.scheduleService.update(scheduleObject);
-        if (!schedule.error) {
-          return res.status(HttpStatus.OK).json({
-            message: 'Schedule succesfully updated',
-            schedule,
-            statusCode: 200
-          })
-        } else {
-          return res.status(HttpStatus.BAD_REQUEST).json({
-            message: schedule.error,
-            statusCode: 400
-          })
-        }
-      } catch (error) {
-        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-          message: 'A ocurrido un error inesperado',
-          statusCode: 400
-        })
-      }
-    }
-
-    @Get('/:type/:temporality')
-    async getSchedule(@Res() res, @Param('type') type, @Param('temporality') temporality): Promise<any> {
-      try {
-        let schedule: any = await this.scheduleService.getSchedule(type, temporality);
+        let schedule: any = await this.scheduleService.getSchedule(type);
         if (!schedule.error) {
           return res.status(HttpStatus.OK).json({
             message: 'schedule succesfully consulted',

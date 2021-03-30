@@ -7,4 +7,11 @@ export class UserDto {
     readonly password:string;
     readonly gender:string;
     readonly job:string;
+    readonly calle: string;
+    readonly exterior: string;
+    readonly interior: string;
+    readonly estado: string;
+    readonly municipio: string;
+    readonly colonia: string;
+    readonly ciudad: string;
   }
