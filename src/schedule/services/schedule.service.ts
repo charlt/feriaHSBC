@@ -15,6 +15,7 @@ export class ScheduleService {
     constructor(
         @InjectModel(Schedule.name) private scheduleModel: Model<ScheduleDocument>,
     ) { }
+
     async save(scheduless: Ischedule): Promise<any> {
         try {
             let scheduletosave: Ischedule = {
@@ -35,9 +36,22 @@ export class ScheduleService {
     }
 
 
+    async getSchedule(tipo: eTypesSchedule): Promise<any> {
+        try {
+            let query: any[];
+            let res:any;
+            let resultado: any[] = [];
+            query =[{$match:{type:tipo}}];
+            res = await this.scheduleModel.aggregate(query);
+            let objeto: any = { type: tipo, res }
+            resultado.push(objeto);
 
-    async getSchedule(type: string): Promise<any> {
-       /* 
-        */ }
+            return resultado;
+        }
+        catch (error) {
+            let message = error._message ?? error.toString()
+            return { error: message }
+        }
+    }
 
 }
