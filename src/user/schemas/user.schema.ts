@@ -23,11 +23,11 @@ export class User {
   email: string;
   @Prop({ default: Date.now })
   createdAt: Date;
-  /*@Prop({ required:true })
+  @Prop({ required:true })
   calle: string;
   @Prop({ required:true })
   exterior: string;
-  @Prop({ required:true })
+  @Prop({ required:false })
   interior: string;
   @Prop({ required:true })
   estado: string;
@@ -36,7 +36,7 @@ export class User {
   @Prop({ required:true })
   colonia: string;
   @Prop({ required:true })
-  ciudad: string;*/
+  ciudad: string;
 
 }
 

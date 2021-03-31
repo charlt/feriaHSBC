@@ -20,7 +20,7 @@ import { ContactsModule } from './contacts/contacts.module';
     ContactsModule
   ],
   controllers: [
-    ScheduleController, AppController],
+     AppController],
   providers: [AppService, UserModule],
 })
 export class AppModule { }
