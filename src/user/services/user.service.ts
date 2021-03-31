@@ -27,6 +27,7 @@ export class UserService {
    */
   async save(user: Iuser) {
     try {
+      console.log('user',user)
       const salt = await genSalt(10);
       let password: any = await hash(user.password, salt);
       user.password = password;
@@ -40,6 +41,7 @@ export class UserService {
       await this.statisticService.save(userSaved._id,statistic);
       return userSaved;
     } catch (error) {
+      console.log('errr',error)
       let message = error._message ?? error.toString()
       return { error: message }
     }
@@ -78,22 +80,22 @@ export class UserService {
     const user: any = await this.userModel.findOne({ email });
     if (!user) {
       return {
-        error: 'user does not exist'
+        error: 'Este usuario no existe'
       }
     }
     const isMatch = await compare(password, user.password);
     if (!isMatch) {
       return {
-        error: 'invalid credentials'
+        error: 'Credenciales invalidas'
       }
     }
     const payload: IJwtPayload = {
       userId:user._id,
-      name: user.name,
+      name: user.name+' '+user.lastName,
       email: user.email
     };
     const token = await this._jwtService.sign(payload);
-    return { token };
+    return { token,name:user.name+' '+user.lastName };
   }
 
 }

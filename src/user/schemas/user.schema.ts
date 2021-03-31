@@ -23,6 +23,20 @@ export class User {
   email: string;
   @Prop({ default: Date.now })
   createdAt: Date;
+  /*@Prop({ required:true })
+  calle: string;
+  @Prop({ required:true })
+  exterior: string;
+  @Prop({ required:true })
+  interior: string;
+  @Prop({ required:true })
+  estado: string;
+  @Prop({ required:true })
+  municipio: string;
+  @Prop({ required:true })
+  colonia: string;
+  @Prop({ required:true })
+  ciudad: string;*/
 
 }
 
