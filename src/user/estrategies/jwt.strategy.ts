@@ -9,7 +9,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 export class JwtStrategy extends PassportStrategy(Strategy){
     constructor(@InjectModel(User.name) private userModel: Model<UserDocument>, ){
         super({
-            jwtFromRequest:ExtractJwt.fromAuthHeaderAsBearerToken(),
+            jwtFromRequest:ExtractJwt.fromHeader('token'),
             ignoreExpiration: false,
             secretOrKey:'HSBCSecret'
         })
