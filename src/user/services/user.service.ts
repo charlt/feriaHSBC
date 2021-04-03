@@ -94,7 +94,7 @@ export class UserService {
       email: user.email
     };
     const token = await this._jwtService.sign(payload);
-    return { token,name:user.email };
+    return { token,name:user.email,gender:user.gender };
   }
 
 }
