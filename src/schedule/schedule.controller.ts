@@ -1,6 +1,6 @@
 import { Controller, Post, Get, Body, Put, Res, HttpStatus, UseGuards, Req, Param } from '@nestjs/common';
-import { ScheduleService } from './services/Schedule.service';
-import { ScheduleDto } from './dto/Schedule.dto';
+import { ScheduleService } from './services/schedule.service';
+import { ScheduleDto } from './dto/schedule.dto';
 
 @Controller('schedule')
 export class ScheduleController {
