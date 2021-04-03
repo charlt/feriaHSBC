@@ -91,11 +91,10 @@ export class UserService {
     }
     const payload: IJwtPayload = {
       userId:user._id,
-      name: user.name+' '+user.lastName,
       email: user.email
     };
     const token = await this._jwtService.sign(payload);
-    return { token,name:user.name+' '+user.lastName };
+    return { token,name:user.email };
   }
 
 }
