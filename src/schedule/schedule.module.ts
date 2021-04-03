@@ -1,5 +1,5 @@
 import { ScheduleService } from './services/schedule.service';
-import { ScheduleController } from './Schedule.controller';
+import { ScheduleController } from './schedule.controller';
 import { Module } from '@nestjs/common';
 import { Schedule, ScheduleSchema } from './schema/schedule.schema';
 import { MongooseModule } from '@nestjs/mongoose';
