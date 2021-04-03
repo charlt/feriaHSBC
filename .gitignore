@@ -102,3 +102,7 @@ dist
 
 # TernJS port file
 .tern-port
+
+#Archivos para Control de entornos
+src/main.ts
+src/app.module.ts
