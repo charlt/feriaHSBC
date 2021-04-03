@@ -12,7 +12,12 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-  app.enableCors();
+  app.enableCors({
+    origin: '*',
+    allowedHeaders: 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Observe',
+    methods: "GET,PUT,POST,DELETE,UPDATE,OPTIONS",
+    credentials: true,
+    });
   await app.listen(4000);
   
 }
