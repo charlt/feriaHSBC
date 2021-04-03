@@ -13,7 +13,7 @@ import { ContactsModule } from './contacts/contacts.module';
   imports: [
     ScheduleModule,
     StatisticModule,
-    MongooseModule.forRoot('mongodb://localhost:27017/hsbcFeria', {
+    MongooseModule.forRoot('mongodb://localhost:27017/hsbcFeriaProd', {
       useNewUrlParser: true
     }),
     UserModule,
