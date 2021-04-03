@@ -105,4 +105,4 @@ dist
 
 #Archivos para Control de entornos
 src/main.ts
-src/app.moule.ts
+src/app.module.ts
