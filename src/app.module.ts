@@ -1,5 +1,5 @@
+import { QuestionsModule } from './questions/questions.module';
 import { ScheduleModule } from './schedule/schedule.module';
-import { ScheduleController } from './schedule/schedule.controller';
 import { StatisticModule } from './statistics/statistic.module';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
@@ -11,6 +11,7 @@ import { ContactsModule } from './contacts/contacts.module';
 @Module({
   //TODO: Variable de entorno db
   imports: [
+    QuestionsModule,
     ScheduleModule,
     StatisticModule,
     MongooseModule.forRoot('mongodb://localhost:27017/hsbcFeria', {
