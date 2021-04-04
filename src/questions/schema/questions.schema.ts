@@ -11,7 +11,7 @@ export class Questions {
   @Prop({ default:Date.now })
   createdAt: Date;
   @Prop({ required: true })
-  type: string;
+  question: string;
 }
 
 export const QuestionsSchema = SchemaFactory.createForClass(Questions);
