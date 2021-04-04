@@ -5,9 +5,7 @@ import { Injectable, Get, NotFoundException, UnauthorizedException, Param } from
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Schedule, ScheduleDocument } from '../schema/schedule.schema';
-import { ObjectID } from 'mongodb';
 const ObjectId = require('mongodb').ObjectId;
-let moment = require('moment');
 
 @Injectable()
 export class ScheduleService {
@@ -39,13 +37,19 @@ export class ScheduleService {
     async getSchedule(tipo: eTypesSchedule): Promise<any> {
         try {
             let query: any[];
-            let res:any;
+            let res: any = '';
+            let fechas: string[] = [];
             let resultado: any[] = [];
-            query =[{$match:{type:tipo}}];
+            query = [{ $match: { type: tipo } }, { $group: { _id: "$fecha_visualizacion" } }, { $sort: { start: 1 } }];
             res = await this.scheduleModel.aggregate(query);
-            let objeto: any = { type: tipo, res }
-            resultado.push(objeto);
-
+            fechas = res;
+            for (const i of fechas) {
+                let fecha: any = Object.values(i);
+                query = [{ $match: { fecha_visualizacion: new Date(fecha), type: tipo } }, { $sort: { start: 1 } }];
+                res = await this.scheduleModel.aggregate(query);
+                let objeto: any = { fecha: Object.values(i), res }
+                resultado.push(objeto);
+            }
             return resultado;
         }
         catch (error) {

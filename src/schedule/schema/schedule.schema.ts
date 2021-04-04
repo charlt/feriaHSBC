@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Mongoose } from 'mongoose';
 const ObjectId = require('mongodb').ObjectId;
-
 export type ScheduleDocument = Schedule & Document;
 
 @Schema()
