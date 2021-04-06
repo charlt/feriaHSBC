@@ -14,16 +14,14 @@ import { MongoClient } from 'mongodb';
   imports: [
     ScheduleModule,
     StatisticModule,
-    MongooseModule.forRoot('mongodb://@localhost:27017/hsbcFeriaDev', {
-      useNewUrlParser: true,
-      user: 'Admindev',
-      pass: 'Mipass#12',
+    MongooseModule.forRoot('mongodb://Admindev:Mipass#12@localhost:27017/hsbcFeriaDev', {
+      useNewUrlParser: true
     }),
     UserModule,
     ContactsModule
   ],
   controllers: [
-     AppController],
+    AppController],
   providers: [AppService, UserModule],
 })
 export class AppModule { }
