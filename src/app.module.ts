@@ -1,5 +1,5 @@
+import { QuestionsModule } from './questions/questions.module';
 import { ScheduleModule } from './schedule/schedule.module';
-import { ScheduleController } from './schedule/schedule.controller';
 import { StatisticModule } from './statistics/statistic.module';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
@@ -12,11 +12,22 @@ import { MongoClient } from 'mongodb';
 @Module({
   //TODO: Variable de entorno db
   imports: [
+    QuestionsModule,
     ScheduleModule,
     StatisticModule,
-    MongooseModule.forRoot('mongodb://superAdminDev:Pass1234@localhost:27017/hsbcFeriaDev', {
-      useNewUrlParser: true
+  //  MongooseModule.forRoot('mongodb://superAdminDev:Pass1234@173.231.203.133:27017/hsbcFeriaDev', {
+    //  useNewUrlParser : true
+   // }),
+   MongooseModule.forRootAsync({
+    useFactory: () => ({
+      uri: `mongodb://superAdminDev:Pass1234@173.231.203.133:27017`,
+    //  user: 'superAdminDev',
+     // pass: 'Pass1234',
+      useNewUrlParser: true,
+      dbName:'hsbcFeriaDev',
+
     }),
+  }),
     UserModule,
     ContactsModule
   ],

@@ -10,6 +10,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('HSBC')
     .build();
+    
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
   app.enableCors({
@@ -19,6 +20,6 @@ async function bootstrap() {
     credentials: true,
     });
   await app.listen(4000);
-  
+  //so
 }
 bootstrap();
