@@ -14,9 +14,7 @@ import { ContactsModule } from './contacts/contacts.module';
     QuestionsModule,
     ScheduleModule,
     StatisticModule,
-    MongooseModule.forRoot('mongodb://superAdminDev:Pass1234@0.0.0.0:27017/hsbcFeria', {
-      user: 'superAdminDev',
-      pass: 'password',  
+    MongooseModule.forRoot('mongodb://superAdminDev:Pass1234@localhost:27017/hsbcFeriaDev', {
       useNewUrlParser: true
     }),
     UserModule,
