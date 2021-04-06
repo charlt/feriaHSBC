@@ -7,14 +7,17 @@ import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
 import { ContactsModule } from './contacts/contacts.module';
+import { MongoClient } from 'mongodb';
 
 @Module({
   //TODO: Variable de entorno db
   imports: [
     ScheduleModule,
     StatisticModule,
-    MongooseModule.forRoot('mongodb://Admindev:Mipass#12@localhost:27017/hsbcFeriaDev', {
-      useNewUrlParser: true
+    MongooseModule.forRoot('mongodb://@localhost:27017/hsbcFeriaDev', {
+      useNewUrlParser: true,
+      user: 'Admindev',
+      pass: 'Mipass#12',
     }),
     UserModule,
     ContactsModule
