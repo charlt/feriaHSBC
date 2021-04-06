@@ -14,7 +14,7 @@ import { MongoClient } from 'mongodb';
   imports: [
     ScheduleModule,
     StatisticModule,
-    MongooseModule.forRoot('mongodb://Admindev:Mipass#12@localhost:27017/hsbcFeriaDev', {
+    MongooseModule.forRoot('mongodb://localhost:27017/hsbcFeriaDev', {
       useNewUrlParser: true
     }),
     UserModule,
