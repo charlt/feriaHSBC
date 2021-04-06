@@ -14,9 +14,10 @@ import { MongoClient } from 'mongodb';
   imports: [
     ScheduleModule,
     StatisticModule,
-    MongooseModule.forRoot('mongodb://@localhost:27017/hsbcFeriaDev', {
+    MongooseModule.forRoot('mongodb://Admindev:Mipass#12@173.231.203.133:27017/hsbcFeriaDev', {
       useNewUrlParser: true,
-        }),
+    
+    }),
     UserModule,
     ContactsModule
   ],
