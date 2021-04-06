@@ -16,9 +16,7 @@ import { MongoClient } from 'mongodb';
     StatisticModule,
     MongooseModule.forRoot('mongodb://@localhost:27017/hsbcFeriaDev', {
       useNewUrlParser: true,
-      user: 'Admindev',
-      pass: 'Mipass#12',
-    }),
+        }),
     UserModule,
     ContactsModule
   ],
