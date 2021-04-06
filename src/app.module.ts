@@ -23,7 +23,7 @@ import { ContactsModule } from './contacts/contacts.module';
     //  user: 'superAdminDev',
      // pass: 'Pass1234',
       useNewUrlParser: true,
-      dbName:'hsbcFeriaDevg',
+      dbName:'hsbcFeriaDev',
 
     }),
   }),
