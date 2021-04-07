@@ -45,7 +45,7 @@ export class ScheduleService {
             fechas = res;
             for (const i of fechas) {
                 let fecha: any = Object.values(i);
-                query = [{ $match: { fecha_visualizacion: new Date(fecha), type: tipo } }, { $sort: { start: 1 } }];
+                query = [{ $match: { fecha_visualizacion: new Date(fecha), type: tipo, status: 'true' } }, { $sort: { start: 1 } }];
                 res = await this.scheduleModel.aggregate(query);
                 let objeto: any = { fecha: Object.values(i), res }
                 resultado.push(objeto);
