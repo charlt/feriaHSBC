@@ -1,7 +1,7 @@
 export enum eTypesSchedule {
-    desarrolloCarrera='Desarrollo y Carrera',
-    Finanzas='Finanzas',
+    desarrolloCarrera='DesarrolloCarrera',
+    finanzas='Finanzas',
     cultura='Cultura',
-    Salud='Salud y bienestar',
+    salud='SaludBienestar',
     balance='Balance'
 }
