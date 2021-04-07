@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
 import { ContactsModule } from './contacts/contacts.module';
+import { MongoClient } from 'mongodb';
 
 @Module({
   //TODO: Variable de entorno db
@@ -14,19 +15,16 @@ import { ContactsModule } from './contacts/contacts.module';
     QuestionsModule,
     ScheduleModule,
     StatisticModule,
-  //  MongooseModule.forRoot('mongodb://superAdminDev:Pass1234@173.231.203.133:27017/hsbcFeriaDev', {
-    //  useNewUrlParser : true
-   // }),
-   MongooseModule.forRootAsync({
-    useFactory: () => ({
-      uri: `mongodb://superAdminDev:Pass1234@173.231.203.133:27017`,
-    //  user: 'superAdminDev',
-     // pass: 'Pass1234',
-      useNewUrlParser: true,
-      dbName:'hsbcFeriaDev',
-
+    //  MongooseModule.forRoot('mongodb://localhost:27017/hsbcFeria', {
+    //   useNewUrlParser : true
+    // }),
+    MongooseModule.forRootAsync({
+      useFactory: () => ({
+        uri: `mongodb://superAdminDev:Pass1234@173.231.203.133:27017`,
+        useNewUrlParser: true,
+        dbName: 'hsbcFeriaDev',
+      }),
     }),
-  }),
     UserModule,
     ContactsModule
   ],
