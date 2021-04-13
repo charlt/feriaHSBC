@@ -5,8 +5,8 @@ import {readFileSync} from 'fs'
 
 async function bootstrap() {
   const httpsOptions = {
-    key: readFileSync('./secrets/private-key.pem'),
-    cert: readFileSync('./secrets/public-certificate.pem'),
+    key: readFileSync('./secrets/key.key.pem'),
+    cert: readFileSync('./secrets/certificate.cert.pem'),
     cors: true 
   }
 
