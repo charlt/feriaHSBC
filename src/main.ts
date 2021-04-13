@@ -7,9 +7,10 @@ async function bootstrap() {
   const httpsOptions = {
     key: readFileSync('./secrets/private-key.pem'),
     cert: readFileSync('./secrets/public-certificate.pem'),
+    cors: true 
   }
 
-  const app = await NestFactory.create(AppModule, {httpsOptions,cors: true });
+  const app = await NestFactory.create(AppModule, { httpsOptions});
   const config = new DocumentBuilder()
     .setTitle('Feria HSBC')
     .setDescription('The HSBC API description')
