@@ -4,5 +4,8 @@ export class QuestionsDto {
   @IsNotEmpty()
   @IsString()
   readonly question: string;
+  @IsNotEmpty()
+  @IsString()
+  readonly cluster:string;
 
 }

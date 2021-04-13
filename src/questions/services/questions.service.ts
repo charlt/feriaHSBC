@@ -12,7 +12,8 @@ export class QuestionsService {
         try {
             let questionsToSave:Iquestions={
                 question:Questions.question,
-                userId:ObjectId(userId)
+                userId:ObjectId(userId),
+                cluster:Questions.cluster
             }
             const createdquestions = new this.questionsModel(questionsToSave);
             return await createdquestions.save();

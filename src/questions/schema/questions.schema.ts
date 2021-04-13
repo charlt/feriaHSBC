@@ -12,6 +12,8 @@ export class Questions {
   createdAt: Date;
   @Prop({ required: true })
   question: string;
+  @Prop({ required: true })
+  cluster: string;
 }
 
 export const QuestionsSchema = SchemaFactory.createForClass(Questions);
