@@ -7,6 +7,7 @@ async function bootstrap() {
   const httpsOptions = {
     key: readFileSync('./secrets/key.key.pem'),
     cert: readFileSync('./secrets/certificate.cert.pem'),
+    ca: readFileSync('./secrets/ca.ca.pem')
       }
 
   const app = await NestFactory.create(AppModule, { httpsOptions,cors: true });
