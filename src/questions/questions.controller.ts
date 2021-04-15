@@ -8,10 +8,11 @@ export class QuestionsController {
     constructor(private readonly questionsService: QuestionsService) { }
 
     @Post('/create')
-    @UseGuards(AuthGuard('jwt'))
-    async saveQuestions(@Req() req: any, @Res() res, @Body() questionsDto: QuestionsDto): Promise<any> {
+    async saveQuestions( @Res() res, @Body() questionsDto: any): Promise<any> {
     try {
-      let questions: any = await this.questionsService.save(req.user.userId, questionsDto);
+     
+      let questions: any = await this.questionsService.save(questionsDto);
+      console.log(questions)
       if (!questions.error) {
         return res.status(HttpStatus.OK).json({
           message: 'question succesfully created',
