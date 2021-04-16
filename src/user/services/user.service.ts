@@ -129,20 +129,47 @@ export class UserService {
   }
 
   async saveCsv(): Promise<any> {
-
-
-    //const salt = await genSalt(10);
-    //let password: any = await hash(user.password, salt);
-    //user.password = password;
-
+    let errors:any=[];
     try {
-      let usuarios:any=[];
-      parseador.on('readable', function () {
-        let fila: string;
-        let contraseña: any = this.generatePasswordRand(8, 'alf');
-        console.log(contraseña);
-        while (fila = parseador.read()) {
 
+      const parseador = csv({
+        delimiter: ',',//Delimitador, por defecto es la coma ,
+        cast: true, // Intentar convertir las cadenas a tipos nativos
+        comment: '#' // El carácter con el que comienzan las líneas de los comentarios, en caso de existir
+      });
+
+      let usuarios: any = [];
+      async function generatePasswordRandInter(length: number, type: string): Promise<any> {
+        let characters: any = "";
+        switch (type) {
+          case 'num':
+            characters = "0123456789";
+            break;
+          case 'alf':
+            characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            break;
+          case 'rand':
+            //FOR ↓
+            break;
+          default:
+            characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            break;
+        }
+        let pass = "";
+        for (let i = 0; i < length; i++) {
+          if (type == 'rand') {
+            pass += String.fromCharCode((Math.floor((Math.random() * 100)) % 94) + 33);
+          } else {
+            pass += characters.charAt(Math.floor(Math.random() * characters.length));
+          }
+        }
+        return pass;
+      }
+
+      parseador.on('readable', async function () {
+        let fila: string;
+        while (fila = parseador.read()) {
+          let contraseña: any = await generatePasswordRandInter(8, 'alf');
           let user: Iuser = {
             email: fila[0],
             password: contraseña
@@ -150,21 +177,8 @@ export class UserService {
           }
           usuarios.push(user);
 
-          const parseador = csv({
-            delimiter: ',',
-            cast: true,
-            comment: '#'
-          });
-          
-          fs.createReadStream("C:/feriaHSBC/src/user/services/Usuarios.csv")
-            .pipe(parseador)
-            .on("end", function () {
-              console.log("Se ha terminado de leer el archivo");
-              parseador.end();
-            });
-          
-         // const createdUser = new this.userModel(user);
-         // let userSaved = createdUser.save();
+          // const createdUser = new this.userModel(user);
+          // let userSaved = createdUser.save();
           // const createdUser = await new this.userModel(user);
           //let userSaved = await  createdUser.save();
 
@@ -177,17 +191,52 @@ export class UserService {
           this.statisticService.save(userSaved._id, statistic);*/
         }
       });
-    }
-    catch {
+
+      fs.createReadStream("./Usuarios.csv")
+        .pipe(parseador)
+        .on("end", async ()=> {
+          console.log("Se ha terminado de leer el archivo");
+          parseador.end();
+          console.log('usuarios.length :>> ', usuarios.length);
+          const unicos = usuarios.filter((valor, indice) => {
+            return usuarios.indexOf(valor) === indice;
+          });
+          console.log('unicos.length :>> ', unicos.length);
+
+          for (let index = 0; index < unicos.length; index++) {
+            const usuario = unicos[index];
+
+            const createdUser = await new this.userModel(usuario);
+            let userSaved;
+            try {
+              userSaved = await createdUser.save();
+            } catch (error) {
+              errors.push(error);
+            }
+           
+
+            let statistic: Istatistic = {
+              type: eTypeStatistics.registro,
+              userId: userSaved._id
+            }
+
+
+            this.statisticService.save(userSaved._id, statistic);
+
+          }
+          console.log('errors.length :>> ', errors.length);
+        });
+
       parseador.on('error', function (err) {
         console.error("Error al leer CSV:", err.message);
         console.log('errr', err)
-      let message = err.message ?? err.toString()
-      return { error: message }
+        let message = err.message ?? err.toString()
+        return { error: message }
       });
-
+    } catch (error) {
+      errors.push(error)
     }
-    
+
 
 
 
