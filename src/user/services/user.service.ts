@@ -243,4 +243,40 @@ export class UserService {
   }
 
 
+
+
+
+  async getOneUser(email: string) {
+    try {
+      const user: any = await this.userModel.findOne({ email });
+      return user;
+    } catch (error) {
+      return {
+        error: error.toString()
+      }
+    }
+  }
+
+  async updateOneUser(userObject: any): Promise<any> {
+  /*  try {
+        let user: any = await this.userModel.findOne({ "email": userObject.email });
+        
+        if (user) {
+            statistic.finishedAt = Date.now();
+            let fecha2: any = moment(statistic.finishedAt);
+            statistic.minutes = fecha2.diff(fecha1, 'minutes');
+            return await this.statisticModel.findOneAndUpdate({ "_id": statisticObject.statisticId }, {
+                finishedAt: statistic.finishedAt,
+                minutes: statistic.minutes
+            });
+        } else {
+            return { error: 'Resource not found' };
+        }
+    } catch (error) {
+        let message = error._message ?? error.toString()
+        return { error: message }
+    }*/
+
+  }
+
 }
