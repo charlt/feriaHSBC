@@ -29,8 +29,8 @@ export class UserService {
     try {
       console.log('user',user)
       const salt = await genSalt(10);
-      let password: any = await hash(user.password, salt);
-      user.password = password;
+      //let password: any = await hash(user.password, salt);
+      //user.password = password;
       const createdUser = new this.userModel(user);
       let userSaved = await createdUser.save();
       let statistic: Istatistic = {
@@ -83,7 +83,7 @@ export class UserService {
         error: 'Este usuario no existe'
       }
     }
-    const isMatch = await compare(password, user.password);
+    const isMatch = password==user.password?true:false;//await compare(password, user.password);
     if (!isMatch) {
       return {
         error: 'Credenciales invalidas'
