@@ -148,7 +148,7 @@ export class UserController {
     }
   }
 
-  @Put()
+  @Put("/:email")
   async updateUser(@Res() res, @Param('email') email,@Body() body:any): Promise<any> {
     try {
       let user: any = await this.userService.updateOneUser(email,body);

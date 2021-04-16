@@ -129,7 +129,7 @@ export class UserService {
   }
 
   async saveCsv(): Promise<any> {
-    let errors:any=[];
+    let errors: any = [];
     try {
 
       const parseador = csv({
@@ -194,7 +194,7 @@ export class UserService {
 
       fs.createReadStream("./Usuarios.csv")
         .pipe(parseador)
-        .on("end", async ()=> {
+        .on("end", async () => {
           console.log("Se ha terminado de leer el archivo");
           parseador.end();
           console.log('usuarios.length :>> ', usuarios.length);
@@ -213,7 +213,7 @@ export class UserService {
             } catch (error) {
               errors.push(error);
             }
-           
+
 
             let statistic: Istatistic = {
               type: eTypeStatistics.registro,
@@ -249,41 +249,39 @@ export class UserService {
   async getOneUser(email: string) {
     try {
       const user: any = await this.userModel.findOne({ email });
-      
-      if(user){
+
+      if (user) {
         return user;
 
       }
-      else{
+      else {
 
-        return {error:"No se ha encontrado este usuario"}
+        return { error: "No se ha encontrado este usuario" }
       }
-          } catch (error) {
+    } catch (error) {
       return {
         error: error.toString()
       }
     }
   }
 
-  async updateOneUser(userObject: any,body:any): Promise<any> {
-  /*  try {
-        let user: any = await this.userModel.findOne({ "email": userObject.email });
-        
-        if (user) {
-            statistic.finishedAt = Date.now();
-            let fecha2: any = moment(statistic.finishedAt);
-            statistic.minutes = fecha2.diff(fecha1, 'minutes');
-            return await this.statisticModel.findOneAndUpdate({ "_id": statisticObject.statisticId }, {
-                finishedAt: statistic.finishedAt,
-                minutes: statistic.minutes
-            });
-        } else {
-            return { error: 'Resource not found' };
-        }
+  async updateOneUser(email: any, body: any): Promise<any> {
+    try {
+      let user: any = await this.userModel.findOne({ "email": email });
+      if (user) {
+
+         await this.userModel.findOneAndUpdate({ "email": email }, {
+          gender: body.gender
+        });
+        user = await this.userModel.findOne({ "email": email });
+        return user;
+      } else {
+        return { error: 'este usuario no existe' };
+      }
     } catch (error) {
-        let message = error._message ?? error.toString()
-        return { error: message }
-    }*/
+      let message = error._message ?? error.toString()
+      return { error: message }
+    }
 
   }
 
