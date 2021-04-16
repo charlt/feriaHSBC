@@ -249,15 +249,23 @@ export class UserService {
   async getOneUser(email: string) {
     try {
       const user: any = await this.userModel.findOne({ email });
-      return user;
-    } catch (error) {
+      
+      if(user){
+        return user;
+
+      }
+      else{
+
+        return {error:"No se ha encontrado este usuario"}
+      }
+          } catch (error) {
       return {
         error: error.toString()
       }
     }
   }
 
-  async updateOneUser(userObject: any): Promise<any> {
+  async updateOneUser(userObject: any,body:any): Promise<any> {
   /*  try {
         let user: any = await this.userModel.findOne({ "email": userObject.email });
         

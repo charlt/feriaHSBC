@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Res, HttpStatus, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Post, Get, Body, Res, HttpStatus, UsePipes, ValidationPipe,Put,Param } from '@nestjs/common';
 import { UserService } from './services/user.service';
 import { UserDto } from './dto/user.dto';
 import { Login } from './dto/login.dto';
@@ -116,6 +116,55 @@ export class UserController {
       }
     } catch (error) {
       console.log('error :>> ', error);
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: 'A ocurrido un error inesperado',
+        statusCode: 400
+      })
+    }
+  }
+  @Get("/:email")
+  async getOneUser(@Res() res, @Param('email') email): Promise<any> {
+    try { 
+      let user: any = await this.userService.getOneUser(email);
+      if (!user.error) {
+        return res.status(HttpStatus.OK).json({
+          message: 'User succesfully consulted',
+          user,
+          statusCode: 200
+        })
+      } else {
+        return res.status(HttpStatus.BAD_REQUEST).json({
+          message: user.error,
+          user,
+          statusCode: 400
+        })
+      }
+    } catch (error) {
+      console.log(error);
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: 'A ocurrido un error inesperado',
+        statusCode: 400
+      })
+    }
+  }
+
+  @Put()
+  async updateUser(@Res() res, @Param('email') email,@Body() body:any): Promise<any> {
+    try {
+      let user: any = await this.userService.updateOneUser(email,body);
+      if (!user.error) {
+        return res.status(HttpStatus.OK).json({
+          message: 'User succesfully updated',
+          user,
+          statusCode: 200
+        })
+      } else {
+        return res.status(HttpStatus.BAD_REQUEST).json({
+          message: user.error,
+          statusCode: 400
+        })
+      }
+    } catch (error) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: 'A ocurrido un error inesperado',
         statusCode: 400
