@@ -34,6 +34,7 @@
         "bcryptjs": "^2.4.3",
         "class-transformer": "^0.4.0",
         "class-validator": "^0.13.1",
+        "csv-parse": "^4.15.4",
         "fs": "0.0.1-security",
         "moment": "^2.29.1",
         "mongodb": "^3.6.4",
