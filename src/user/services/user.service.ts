@@ -256,7 +256,7 @@ export class UserService {
       }
       else {
 
-        return { error: "No se ha encontrado este usuario" }
+        return {err:"No se ha encontrado este usuario"}
       }
     } catch (error) {
       return {
@@ -269,14 +269,12 @@ export class UserService {
     try {
       let user: any = await this.userModel.findOne({ "email": email });
       if (user) {
-
          await this.userModel.findOneAndUpdate({ "email": email }, {
           gender: body.gender
         });
-        user = await this.userModel.findOne({ "email": email });
         return user;
       } else {
-        return { error: 'este usuario no existe' };
+        return { err: 'No se ha encontrado un registro con estos datos.' };
       }
     } catch (error) {
       let message = error._message ?? error.toString()
