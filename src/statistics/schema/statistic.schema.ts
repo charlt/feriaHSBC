@@ -12,6 +12,8 @@ export class Statistic {
   createdAt: Date;
   @Prop({ required: false })
   finishedAt: Date;
+  @Prop({ required: false })
+  typeSchedule: string;
   @Prop({ required: true })
   type: string;
   @Prop({ required: false })
