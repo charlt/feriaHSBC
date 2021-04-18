@@ -34,6 +34,9 @@ export class StatisticService {
         console.log(statistic);
         const dataUser:any = await this._jwtService.decode(statistic.token);
         delete statistic.token;
+        if(typeof statistic.scheduleId != 'undefined'){
+            statistic.scheduleId = ObjectId(statistic.scheduleId);
+        }
         // console.log(statistic);
         try {
             let statisticToSave:Istatistic={
@@ -82,64 +85,217 @@ export class StatisticService {
             let countg: any;
             let resultado: any[] = [];
             switch (type) {
-                case eTypeStatistics.loginByGender:
-                    if (temporality == eTypeTemporalities.all) {
-                        for (const i of Object.values(eTypeGenders)) {
-                            query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, { $match: { type: 'Login', 'users.gender': i } }];
-                            countg = await this.statisticModel.aggregate(query);
-                            let objeto: any = { type: i, count: countg.length }
-                            resultado.push(objeto);
-                        }
-                    }
-                    if (temporality == eTypeTemporalities.day) {
-                        for (const i of Object.values(eTypeGenders)) {
-                            query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, { $match: { type: 'Login', 'users.gender': i } }, { $group: { _id: { $dayOfMonth: "$createdAt" }, count: { $sum: 1 } } }];
-                            countg = await this.statisticModel.aggregate(query);
-                            let objeto: any = { type: i, countg }
-                            resultado.push(objeto);
-                        }
-                    }
-                    return resultado;
+                // case eTypeStatistics.loginByGender:
+                //     if (temporality == eTypeTemporalities.all) {
+                //         for (const i of Object.values(eTypeGenders)) {
+                //             query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, { $match: { type: 'Login', 'users.gender': i } }];
+                //             countg = await this.statisticModel.aggregate(query);
+                //             let objeto: any = { type: i, count: countg.length }
+                //             resultado.push(objeto);
+                //         }
+                //     }
+                //     if (temporality == eTypeTemporalities.day) {
+                //         for (const i of Object.values(eTypeGenders)) {
+                //             query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, { $match: { type: '{'$match': {
+                //                 '$expr': {
+                //                     '$eq': [
+                //                         { "$dateToString": { format: "%Y-%m-%d", date: "$createdAt" }},
+                //                         { "$dateToString": { format: "%Y-%m-%d", date: new Date() }},
+                //                      ]
+                //                 } 
+                //             }}];
+                // //             countg = await this.statisticModel.aggregate(query);
+                //             let objeto: any = { type: i, countg }
+                //             resultado.push(objeto);
+                //         }
+                //     }
+                //     return resultado;
                 case eTypeStatistics.login:
                     if (temporality == eTypeTemporalities.all) {
                         query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, { $match: { type: 'Login' } }];
                         countg = await this.statisticModel.aggregate(query);
-                        console.log(countg);
+                        // console.log(countg);
+                        countg = countg.map( f =>{
+                            let tmp = f;
+                            if (typeof tmp?.users[0]?._id != 'undefined' ){
+                                    return {
+                                        email: f.users[0].email,
+                                        createdAt: tmp.createdAt,
+                                        type: tmp.type,
+                                        typeSchedule: tmp.typeSchedule,
+                                        userId: tmp.userId,
+                                        _id: tmp._id,
+                                        scheduleId: '',
+                                        nameEvento: '',
+                                        url: '',
+                                        video: ''
+                                    }
+                            }else{
+                                return {
+                                    email: '',
+                                    createdAt: tmp.createdAt,
+                                    type: tmp.type,
+                                    typeSchedule: tmp.typeSchedule,
+                                    userId: '',
+                                    _id: tmp._id,
+                                    scheduleId: '',
+                                    nameEvento: '',
+                                    url: '',
+                                    video: ''
+                                }
+                                
+                            }
+                        })
                         let objeto: any = { LoginsTotales: countg.length }
                         resultado.push(objeto);
                     }
                     if (temporality == eTypeTemporalities.day) {
-                        query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, { $match: { type: 'Login' } }, { $group: { _id: { $dayOfMonth: "$createdAt" }, count: { $sum: 1 } } }];
+                        query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, {'$match': {
+                                '$expr': {
+                                    '$eq': [
+                                        { "$dateToString": { format: "%Y-%m-%d", date: "$createdAt" }},
+                                        { "$dateToString": { format: "%Y-%m-%d", date: new Date() }},
+                                     ]
+                                } 
+                            }}];
                         countg = await this.statisticModel.aggregate(query);
+                        countg = countg.map( f =>{
+                            let tmp = f;
+                            if (typeof tmp?.users[0]?._id != 'undefined' ){
+                                    return {
+                                        email: f.users[0].email,
+                                        createdAt: tmp.createdAt,
+                                        type: tmp.type,
+                                        typeSchedule: tmp.typeSchedule,
+                                        userId: tmp.userId,
+                                        _id: tmp._id,
+                                        scheduleId: '',
+                                        nameEvento: '',
+                                        url: '',
+                                        video: ''
+                                    }
+                            }else{
+                                return {
+                                    email: '',
+                                    createdAt: tmp.createdAt,
+                                    type: tmp.type,
+                                    typeSchedule: tmp.typeSchedule,
+                                    userId: '',
+                                    _id: tmp._id,
+                                    scheduleId: '',
+                                    nameEvento: '',
+                                    url: '',
+                                    video: ''
+                                }
+                                
+                            }
+                        })
                         let objeto: any = { LoginsPorDia: countg }
                         resultado.push(objeto);
                     }
                     return resultado;
-                case eTypeStatistics.statisticsLogin:
-                    if (temporality == eTypeTemporalities.all) {
-                        query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, { $match: { type: 'Login' } }];
-                        countg = await this.statisticModel.aggregate(query);
-                        let objeto: any = { LoginsTotales: countg.length }
-                        resultado.push(objeto);
-                    }
-                    if (temporality == eTypeTemporalities.day) {
-                        query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, { $match: { type: 'Login' } }, { $group: { _id: { $dayOfMonth: "$createdAt" }, count: { $sum: 1 } } }];
-                        countg = await this.statisticModel.aggregate(query);
-                        let objeto: any = { LoginsPorDia: countg }
-                        resultado.push(objeto);
-                    }
-                    return resultado;
-                case eTypeStatistics.statisticsRegistro:
+                // case eTypeStatistics.statisticsLogin:
+                //     if (temporality == eTypeTemporalities.all) {
+                //         query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, { $match: { type: 'Login' } }];
+                //         countg = await this.statisticModel.aggregate(query);
+                //         let objeto: any = { LoginsTotales: countg.length }
+                //         resultado.push(objeto);
+                //     }
+                //     if (temporality == eTypeTemporalities.day) {
+                //         query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, {'$match': {
+                            //     '$expr': {
+                            //         '$eq': [
+                            //             { "$dateToString": { format: "%Y-%m-%d", date: "$createdAt" }},
+                            //             { "$dateToString": { format: "%Y-%m-%d", date: new Date() }},
+                            //          ]
+                            //     } 
+                            // }}];
+                //         countg = await this.statisticModel.aggregate(query);
+                //         let objeto: any = { LoginsPorDia: countg }
+                //         resultado.push(objeto);
+                //     }
+                //     return resultado;
+                case eTypeStatistics.registro:
                     if (temporality == eTypeTemporalities.all) {
                         query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, { $match: { type: 'Registro' } }];
                         countg = await this.statisticModel.aggregate(query);
+                        countg = countg.map( f =>{
+                            let tmp = f;
+                            if (typeof tmp?.users[0]?._id != 'undefined' ){
+                                    return {
+                                        email: f.users[0].email,
+                                        createdAt: tmp.createdAt,
+                                        type: tmp.type,
+                                        typeSchedule: tmp.typeSchedule,
+                                        userId: tmp.userId,
+                                        _id: tmp._id,
+                                        scheduleId: '',
+                                        nameEvento: '',
+                                        url: '',
+                                        video: ''
+                                    }
+                            }else{
+                                return {
+                                    email: '',
+                                    createdAt: tmp.createdAt,
+                                    type: tmp.type,
+                                    typeSchedule: tmp.typeSchedule,
+                                    userId: '',
+                                    _id: tmp._id,
+                                    scheduleId: '',
+                                    nameEvento: '',
+                                    url: '',
+                                    video: ''
+                                }
+                                
+                            }
+                        })
                         let objeto: any = { RegistrosTotales: countg.length }
                         resultado.push(objeto);
                     }
                     if (temporality == eTypeTemporalities.day) {
-                        query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, { $match: { type: 'Registro' } }, { $group: { _id: { $dayOfMonth: "$createdAt" }, count: { $sum: 1 } } }];
+                        query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, {'$match': {
+                                '$expr': {
+                                    '$eq': [
+                                        { "$dateToString": { format: "%Y-%m-%d", date: "$createdAt" }},
+                                        { "$dateToString": { format: "%Y-%m-%d", date: new Date() }},
+                                     ]
+                                } 
+                            }}];
                         countg = await this.statisticModel.aggregate(query);
-                        let objeto: any = { RegistrosPorDia: countg }
+                        countg = countg.map( f =>{
+                            let tmp = f;
+                            if (typeof tmp?.users[0]?._id != 'undefined' ){
+                                    return {
+                                        email: f.users[0].email,
+                                        createdAt: tmp.createdAt,
+                                        type: tmp.type,
+                                        typeSchedule: tmp.typeSchedule,
+                                        userId: tmp.userId,
+                                        _id: tmp._id,
+                                        scheduleId: '',
+                                        nameEvento: '',
+                                        url: '',
+                                        video: ''
+                                    }
+                            }else{
+                                return {
+                                    email: '',
+                                    createdAt: tmp.createdAt,
+                                    type: tmp.type,
+                                    typeSchedule: tmp.typeSchedule,
+                                    userId: '',
+                                    _id: tmp._id,
+                                    scheduleId: '',
+                                    nameEvento: '',
+                                    url: '',
+                                    video: ''
+                                }
+                                
+                            }
+                        })
+                        let objeto: any = countg;
+                        // { RegistrosTotales: countg.length ,Registros: countg }
                         resultado.push(objeto);
                     }
                     return resultado;
@@ -151,9 +307,48 @@ export class StatisticService {
                         resultado.push(objeto);
                     }
                     if (temporality == eTypeTemporalities.day) {
-                        query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, { $match: { type: 'entrarSchundle' } }, { $group: { _id: { $dayOfMonth: "$createdAt" }, count: { $sum: 1 } } }];
+                        query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, {'$match': {
+                                '$expr': {
+                                    '$eq': [
+                                        { "$dateToString": { format: "%Y-%m-%d", date: "$createdAt" }},
+                                        { "$dateToString": { format: "%Y-%m-%d", date: new Date() }},
+                                     ]
+                                } 
+                            }}];
                         countg = await this.statisticModel.aggregate(query);
-                        let objeto: any = { RegistrosPorDia: countg }
+                        countg = countg.map( f =>{
+                            let tmp = f;
+                            if (typeof tmp?.users[0]?._id != 'undefined' ){
+                                    return {
+                                        email: f.users[0].email,
+                                        createdAt: tmp.createdAt,
+                                        type: tmp.type,
+                                        typeSchedule: tmp.typeSchedule,
+                                        userId: tmp.userId,
+                                        _id: tmp._id,
+                                        scheduleId: '',
+                                        nameEvento: '',
+                                        url: '',
+                                        video: ''
+                                    }
+                            }else{
+                                return {
+                                    email: '',
+                                    createdAt: tmp.createdAt,
+                                    type: tmp.type,
+                                    typeSchedule: tmp.typeSchedule,
+                                    userId: '',
+                                    _id: tmp._id,
+                                    scheduleId: '',
+                                    nameEvento: '',
+                                    url: '',
+                                    video: ''
+                                }
+                                
+                            }
+                        })
+                        let objeto: any = countg;
+                        // { RegistrosTotales: countg.length ,Registros: countg }
                         resultado.push(objeto);
                     }
                     return resultado;
@@ -161,13 +356,497 @@ export class StatisticService {
                     if (temporality == eTypeTemporalities.all) {
                         query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, { $match: { type: 'entrarAgenda' } }];
                         countg = await this.statisticModel.aggregate(query);
-                        let objeto: any = { RegistrosTotales: countg.length ,Registros: countg }
+                        countg = countg.map( f =>{
+                            let tmp = f;
+                            if (typeof tmp?.users[0]?._id != 'undefined' ){
+                                    return {
+                                        email: f.users[0].email,
+                                        createdAt: tmp.createdAt,
+                                        type: tmp.type,
+                                        typeSchedule: tmp.typeSchedule,
+                                        userId: tmp.userId,
+                                        _id: tmp._id,
+                                        scheduleId: '',
+                                        nameEvento: '',
+                                        url: '',
+                                        video: ''
+                                    }
+                            }else{
+                                return {
+                                    email: '',
+                                    createdAt: tmp.createdAt,
+                                    type: tmp.type,
+                                    typeSchedule: tmp.typeSchedule,
+                                    userId: '',
+                                    _id: tmp._id,
+                                    scheduleId: '',
+                                    nameEvento: '',
+                                    url: '',
+                                    video: ''
+                                }
+                                
+                            }
+                        })
+                        let objeto: any = countg;
+                        // { RegistrosTotales: countg.length ,Registros: countg }
                         resultado.push(objeto);
                     }
                     if (temporality == eTypeTemporalities.day) {
-                        query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, { $match: { type: 'entrarAgenda' } }, { $group: { _id: { $dayOfMonth: "$createdAt" }, count: { $sum: 1 } } }];
+                        query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, {'$match': {
+                                '$expr': {
+                                    '$eq': [
+                                        { "$dateToString": { format: "%Y-%m-%d", date: "$createdAt" }},
+                                        { "$dateToString": { format: "%Y-%m-%d", date: new Date() }},
+                                     ]
+                                } 
+                            }}];
                         countg = await this.statisticModel.aggregate(query);
-                        let objeto: any = { RegistrosPorDia: countg }
+                        countg = countg.map( f =>{
+                            let tmp = f;
+                            if (typeof tmp?.users[0]?._id != 'undefined' ){
+                                    return {
+                                        email: f.users[0].email,
+                                        createdAt: tmp.createdAt,
+                                        type: tmp.type,
+                                        typeSchedule: tmp.typeSchedule,
+                                        userId: tmp.userId,
+                                        _id: tmp._id,
+                                        scheduleId: '',
+                                        nameEvento: '',
+                                        url: '',
+                                        video: ''
+                                    }
+                            }else{
+                                return {
+                                    email: '',
+                                    createdAt: tmp.createdAt,
+                                    type: tmp.type,
+                                    typeSchedule: tmp.typeSchedule,
+                                    userId: '',
+                                    _id: tmp._id,
+                                    scheduleId: '',
+                                    nameEvento: '',
+                                    url: '',
+                                    video: ''
+                                }
+                                
+                            }
+                        })
+                        let objeto: any = countg;
+                        // { RegistrosTotales: countg.length ,Registros: countg }
+                        resultado.push(objeto);
+                    }
+                    return resultado;
+                case eTypeStatistics.entrarEvento:
+                    if (temporality == eTypeTemporalities.all) {
+                        query = [
+                            { 
+                                $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } 
+                            },
+                            { 
+                                $lookup: { from: 'schedules', localField: 'scheduleId', foreignField: '_id', as: 'schedules' } 
+                            }
+                            , { $match: { type: 'entrarEvento' } }];
+                        countg = await this.statisticModel.aggregate(query);
+                        countg = countg.map( f =>{
+                            let tmp = f;
+                            if (typeof tmp?.users[0]?._id != 'undefined' ){
+                                if (typeof tmp?.schedules[0]?._id != 'undefined' ){
+                                    
+                                        return {
+                                            email: tmp.users[0].email,
+                                            createdAt: tmp.createdAt,
+                                            scheduleId: tmp.scheduleId,
+                                            type: tmp.type,
+                                            typeSchedule: tmp.typeSchedule,
+                                            userId: tmp.userId,
+                                            _id: tmp._id,                              
+                                            nameEvento: tmp.schedules[0].name,                                
+                                            url: tmp.schedules[0].url,                                
+                                            video: tmp.schedules[0].video
+                                        }
+
+                                }else{
+                                    return {
+                                        email: f.users[0].email,
+                                        createdAt: tmp.createdAt,
+                                        type: tmp.type,
+                                        typeSchedule: tmp.typeSchedule,
+                                        userId: tmp.userId,
+                                        _id: tmp._id,
+                                        scheduleId: '',
+                                        nameEvento: '',
+                                        url: '',
+                                        video: ''
+                                    }
+                                    
+                                }
+                            }else{
+                                return {
+                                    email: '',
+                                    createdAt: tmp.createdAt,
+                                    type: tmp.type,
+                                    typeSchedule: tmp.typeSchedule,
+                                    userId: '',
+                                    _id: tmp._id,
+                                    scheduleId: '',
+                                    nameEvento: '',
+                                    url: '',
+                                    video: ''
+                                }
+                                
+                            }
+                        })
+                        let objeto: any = countg;
+                        // { RegistrosTotales: countg.length ,Registros: countg }
+                        resultado.push(objeto);
+                    }
+                    if (temporality == eTypeTemporalities.day) {
+                        query = [
+                            { 
+                                $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } 
+                            },
+                            { 
+                                $lookup: { from: 'schedules', localField: 'scheduleId', foreignField: '_id', as: 'schedules' } 
+                            }
+                            , {'$match': {
+                                '$expr': {
+                                    '$eq': [
+                                        { "$dateToString": { format: "%Y-%m-%d", date: "$createdAt" }},
+                                        { "$dateToString": { format: "%Y-%m-%d", date: new Date() }},
+                                     ]
+                                } 
+                            }}];
+                        countg = await this.statisticModel.aggregate(query);
+                        countg = countg.map( f =>{
+                            let tmp = f;
+                            if (typeof tmp?.users[0]?._id != 'undefined' ){
+                                if (typeof tmp?.schedules[0]?._id != 'undefined' ){
+                                    
+                                        return {
+                                            email: tmp.users[0].email,
+                                            createdAt: tmp.createdAt,
+                                            scheduleId: tmp.scheduleId,
+                                            type: tmp.type,
+                                            typeSchedule: tmp.typeSchedule,
+                                            userId: tmp.userId,
+                                            _id: tmp._id,                              
+                                            nameEvento: tmp.schedules[0].name,                                
+                                            url: tmp.schedules[0].url,                                
+                                            video: tmp.schedules[0].video
+                                        }
+
+                                }else{
+                                    return {
+                                        email: f.users[0].email,
+                                        createdAt: tmp.createdAt,
+                                        type: tmp.type,
+                                        typeSchedule: tmp.typeSchedule,
+                                        userId: tmp.userId,
+                                        _id: tmp._id,
+                                        scheduleId: '',
+                                        nameEvento: '',
+                                        url: '',
+                                        video: ''
+                                    }
+                                    
+                                }
+                            }else{
+                                return {
+                                    email: '',
+                                    createdAt: tmp.createdAt,
+                                    type: tmp.type,
+                                    typeSchedule: tmp.typeSchedule,
+                                    userId: '',
+                                    _id: tmp._id,
+                                    scheduleId: '',
+                                    nameEvento: '',
+                                    url: '',
+                                    video: ''
+                                }
+                                
+                            }
+                        })
+                        let objeto: any = countg;
+                        // { RegistrosTotales: countg.length ,Registros: countg }
+                        resultado.push(objeto);
+                    }
+                    return resultado;
+                case eTypeStatistics.entrarVideo:
+                    if (temporality == eTypeTemporalities.all) {
+                        // query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, { $match: { type: 'entrarVideo' } }];
+                        query = [
+                            { 
+                                $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } 
+                            },
+                            { 
+                                $lookup: { from: 'schedules', localField: 'scheduleId', foreignField: '_id', as: 'schedules' } 
+                            }
+                            , { $match: { type: 'entrarVideo' } }];
+                        countg = await this.statisticModel.aggregate(query);
+                        countg = countg.map( f =>{
+                            let tmp = f;
+                            if (typeof tmp?.users[0]?._id != 'undefined' ){
+                                if (typeof tmp?.schedules[0]?._id != 'undefined' ){
+                                    
+                                        return {
+                                            email: tmp.users[0].email,
+                                            createdAt: tmp.createdAt,
+                                            scheduleId: tmp.scheduleId,
+                                            type: tmp.type,
+                                            typeSchedule: tmp.typeSchedule,
+                                            userId: tmp.userId,
+                                            _id: tmp._id,                              
+                                            nameEvento: tmp.schedules[0].name,                                
+                                            url: tmp.schedules[0].url,                                
+                                            video: tmp.schedules[0].video
+                                        }
+
+                                }else{
+                                    return {
+                                        email: f.users[0].email,
+                                        createdAt: tmp.createdAt,
+                                        type: tmp.type,
+                                        typeSchedule: tmp.typeSchedule,
+                                        userId: tmp.userId,
+                                        _id: tmp._id,
+                                        scheduleId: '',
+                                        nameEvento: '',
+                                        url: '',
+                                        video: ''
+                                    }
+                                    
+                                }
+                            }else{
+                                return {
+                                    email: '',
+                                    createdAt: tmp.createdAt,
+                                    type: tmp.type,
+                                    typeSchedule: tmp.typeSchedule,
+                                    userId: '',
+                                    _id: tmp._id,
+                                    scheduleId: '',
+                                    nameEvento: '',
+                                    url: '',
+                                    video: ''
+                                }
+                                
+                            }
+                        })
+                        let objeto: any = countg;
+                        // { RegistrosTotales: countg.length ,Registros: countg }
+                        resultado.push(objeto);
+                    }
+                    if (temporality == eTypeTemporalities.day) {
+                        query = [
+                            { 
+                                $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } 
+                            },
+                            { 
+                                $lookup: { from: 'schedules', localField: 'scheduleId', foreignField: '_id', as: 'schedules' } 
+                            }
+                            , {'$match': {
+                                '$expr': {
+                                    '$eq': [
+                                        { "$dateToString": { format: "%Y-%m-%d", date: "$createdAt" }},
+                                        { "$dateToString": { format: "%Y-%m-%d", date: new Date() }},
+                                     ]
+                                } 
+                            }}];
+                        countg = await this.statisticModel.aggregate(query);
+                        countg = countg.map( f =>{
+                            let tmp = f;
+                            if (typeof tmp?.users[0]?._id != 'undefined' ){
+                                if (typeof tmp?.schedules[0]?._id != 'undefined' ){
+                                    
+                                        return {
+                                            email: tmp.users[0].email,
+                                            createdAt: tmp.createdAt,
+                                            scheduleId: tmp.scheduleId,
+                                            type: tmp.type,
+                                            typeSchedule: tmp.typeSchedule,
+                                            userId: tmp.userId,
+                                            _id: tmp._id,                              
+                                            nameEvento: tmp.schedules[0].name,                                
+                                            url: tmp.schedules[0].url,                                
+                                            video: tmp.schedules[0].video
+                                        }
+
+                                }else{
+                                    return {
+                                        email: f.users[0].email,
+                                        createdAt: tmp.createdAt,
+                                        type: tmp.type,
+                                        typeSchedule: tmp.typeSchedule,
+                                        userId: tmp.userId,
+                                        _id: tmp._id,
+                                        scheduleId: '',
+                                        nameEvento: '',
+                                        url: '',
+                                        video: ''
+                                    }
+                                    
+                                }
+                            }else{
+                                return {
+                                    email: '',
+                                    createdAt: tmp.createdAt,
+                                    type: tmp.type,
+                                    typeSchedule: tmp.typeSchedule,
+                                    userId: '',
+                                    _id: tmp._id,
+                                    scheduleId: '',
+                                    nameEvento: '',
+                                    url: '',
+                                    video: ''
+                                }
+                                
+                            }
+                        })
+                        let objeto: any = countg;
+                        // { RegistrosTotales: countg.length ,Registros: countg }
+                        resultado.push(objeto);
+                    }
+                    return resultado;
+                case eTypeStatistics.all:
+                    if (temporality == eTypeTemporalities.all) {
+                        // query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, { $match: { type: 'entrarVideo' } }];
+                        query = [
+                            { 
+                                $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } 
+                            },
+                            { 
+                                $lookup: { from: 'schedules', localField: 'scheduleId', foreignField: '_id', as: 'schedules' } 
+                            }
+                            ];
+                        countg = await this.statisticModel.aggregate(query);
+                        countg = countg.map( f =>{
+                            let tmp = f;
+                            if (typeof tmp?.users[0]?._id != 'undefined' ){
+                                if (typeof tmp?.schedules[0]?._id != 'undefined' ){
+                                    
+                                        return {
+                                            email: tmp.users[0].email,
+                                            createdAt: tmp.createdAt,
+                                            scheduleId: tmp.scheduleId,
+                                            type: tmp.type,
+                                            typeSchedule: tmp.typeSchedule,
+                                            userId: tmp.userId,
+                                            _id: tmp._id,                              
+                                            nameEvento: tmp.schedules[0].name,                                
+                                            url: tmp.schedules[0].url,                                
+                                            video: tmp.schedules[0].video
+                                        }
+
+                                }else{
+                                    return {
+                                        email: f.users[0].email,
+                                        createdAt: tmp.createdAt,
+                                        type: tmp.type,
+                                        typeSchedule: tmp.typeSchedule,
+                                        userId: tmp.userId,
+                                        _id: tmp._id,
+                                        scheduleId: '',
+                                        nameEvento: '',
+                                        url: '',
+                                        video: ''
+                                    }
+                                    
+                                }
+                            }else{
+                                return {
+                                    email: '',
+                                    createdAt: tmp.createdAt,
+                                    type: tmp.type,
+                                    typeSchedule: tmp.typeSchedule,
+                                    userId: '',
+                                    _id: tmp._id,
+                                    scheduleId: '',
+                                    nameEvento: '',
+                                    url: '',
+                                    video: ''
+                                }
+                                
+                            }
+                        })
+                        let objeto: any = countg;
+                        // { RegistrosTotales: countg.length ,Registros: countg }
+                        resultado.push(objeto);
+                    }
+                    if (temporality == eTypeTemporalities.day) {
+                        console.log(1);
+                        query = [
+                            { 
+                                $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } 
+                            },
+                            { 
+                                $lookup: { from: 'schedules', localField: 'scheduleId', foreignField: '_id', as: 'schedules' } 
+                            }
+                            ,{'$match': {
+                                '$expr': {
+                                    '$eq': [
+                                        { "$dateToString": { format: "%Y-%m-%d", date: "$createdAt" }},
+                                        { "$dateToString": { format: "%Y-%m-%d", date: new Date() }},
+                                     ]
+                                } 
+                            }}];
+                        countg = await this.statisticModel.aggregate(query);
+                        countg = countg.map( f =>{
+                            let tmp = f;
+                        console.log(2, tmp);
+                            if (typeof tmp?.users[0]?._id != 'undefined' ){
+                            console.log(3);
+
+                                if (typeof tmp?.schedules[0]?._id != 'undefined' ){
+                                    console.log(4);
+
+                                    
+                                        return {
+                                            email: tmp.users[0]?.email || '',
+                                            createdAt: tmp.createdAt,
+                                            scheduleId: tmp.scheduleId,
+                                            type: tmp.type,
+                                            typeSchedule: tmp.typeSchedule,
+                                            userId: tmp.userId,
+                                            _id: tmp._id,                              
+                                            nameEvento: tmp.schedules[0]?.name || '',                                
+                                            url: tmp.schedules[0]?.url || '',                                
+                                            video: tmp.schedules[0]?.video || ''
+                                        }
+
+                                }else{
+                                    return {
+                                        email: f.users[0]?.email || '',
+                                        createdAt: tmp.createdAt,
+                                        type: tmp.type,
+                                        typeSchedule: tmp.typeSchedule,
+                                        userId: tmp.userId,
+                                        _id: tmp._id,
+                                        scheduleId: '',
+                                        nameEvento: '',
+                                        url: '',
+                                        video: ''
+                                    }
+                                    
+                                }
+                            }else{
+                                return {
+                                    email: '',
+                                    createdAt: tmp.createdAt,
+                                    type: tmp.type,
+                                    typeSchedule: tmp.typeSchedule,
+                                    userId: '',
+                                    _id: tmp._id,
+                                    scheduleId: '',
+                                    nameEvento: '',
+                                    url: '',
+                                    video: ''
+                                }
+                                
+                            }
+                        })
+                        let objeto: any = countg;
+                        // { RegistrosTotales: countg.length ,Registros: countg }
                         resultado.push(objeto);
                     }
                     return resultado;

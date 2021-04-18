@@ -1,4 +1,5 @@
 export enum eTypeStatistics {
+    all='all',
     login='Login',
     registro='Registro',
     juego='Juego',
@@ -6,7 +7,7 @@ export enum eTypeStatistics {
     // cerrarAgenda='cerrarAgenda',
     entrarSchundle='entrarSchundle',
     // salirSchundle='salirSchundle',
-    entarAgendaAnterior='entarAgendaAnterior',
+    entrarAgendaAnterior='entrarAgendaAnterior',
     // salirAgendaAnterior='salirAgendaAnterior',
     entrarEvento='entrarEvento',
     // salirEvento='salirEvento',
