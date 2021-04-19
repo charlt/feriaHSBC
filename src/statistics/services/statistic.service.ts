@@ -310,6 +310,37 @@ export class StatisticService {
                     if (temporality == eTypeTemporalities.all) {
                         query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, { $match: { type: 'entrarSchundle' } }];
                         countg = await this.statisticModel.aggregate(query);
+                        countg = countg.map( f =>{
+                            let tmp = f;
+                            if (typeof tmp?.users[0]?._id != 'undefined' ){
+                                    return {
+                                        email: f.users[0].email,
+                                        createdAt: tmp.createdAt,
+                                        type: tmp.type,
+                                        typeSchedule: tmp.typeSchedule,
+                                        userId: tmp.userId,
+                                        _id: tmp._id,
+                                        scheduleId: '',
+                                        nameEvento: '',
+                                        url: '',
+                                        video: ''
+                                    }
+                            }else{
+                                return {
+                                    email: '',
+                                    createdAt: tmp.createdAt,
+                                    type: tmp.type,
+                                    typeSchedule: tmp.typeSchedule,
+                                    userId: '',
+                                    _id: tmp._id,
+                                    scheduleId: '',
+                                    nameEvento: '',
+                                    url: '',
+                                    video: ''
+                                }
+                                
+                            }
+                        })
                         let objeto: any = countg;
                         // let objeto: any = { RegistrosTotales: countg.length }
                         resultado.push(objeto);
