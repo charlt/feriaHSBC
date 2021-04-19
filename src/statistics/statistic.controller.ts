@@ -30,6 +30,30 @@ export class StatisticController {
       })
     }
   }
+  
+  @Post('/create2')
+  async saveStatistic2(@Req() req: any, @Res() res, @Body() statisticDto: StatisticDto): Promise<any> {
+    try {
+      let statistic: any = await this.statisticService.save2(statisticDto);
+      if (!statistic.error) {
+        return res.status(HttpStatus.OK).json({
+          message: 'Statistic succesfully created',
+          statistic,
+          statusCode: 200
+        })
+      } else {
+        return res.status(HttpStatus.BAD_REQUEST).json({
+          message: statistic.error,
+          statusCode: 400
+        })
+      }
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: 'A ocurrido un error inesperado',
+        statusCode: 400
+      })
+    }
+  }
 
 
 
@@ -61,7 +85,9 @@ export class StatisticController {
   @Get('/:type/:temporality')
   async getStatistics(@Res() res, @Param('type') type, @Param('temporality') temporality): Promise<any> {
     try {
+
       let statistics: any = await this.statisticService.getStatistics(type, temporality);
+      
       if (!statistics.error) {
         return res.status(HttpStatus.OK).json({
           message: 'Statistic succesfully consulted',

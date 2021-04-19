@@ -8,10 +8,14 @@ export type StatisticDocument = Statistic & Document;
 export class Statistic {
   @Prop({ type: ObjectId, ref: 'User' })
   userId: string;
+  @Prop({ type: ObjectId, ref: 'Schedule',required: false })
+  scheduleId: string;
   @Prop({ default:Date.now })
   createdAt: Date;
   @Prop({ required: false })
   finishedAt: Date;
+  @Prop({ required: false })
+  typeSchedule: string;
   @Prop({ required: true })
   type: string;
   @Prop({ required: false })
