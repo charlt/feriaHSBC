@@ -146,7 +146,8 @@ export class StatisticService {
                                 
                             }
                         })
-                        let objeto: any = { LoginsTotales: countg.length }
+                        let objeto: any = countg ;
+                        // let objeto: any = { LoginsTotales: countg }
                         resultado.push(objeto);
                     }
                     if (temporality == eTypeTemporalities.day) {
@@ -190,7 +191,8 @@ export class StatisticService {
                                 
                             }
                         })
-                        let objeto: any = { LoginsPorDia: countg }
+                        let objeto: any = countg ;
+                        // let objeto: any = { LoginsPorDia: countg }
                         resultado.push(objeto);
                     }
                     return resultado;
@@ -250,7 +252,8 @@ export class StatisticService {
                                 
                             }
                         })
-                        let objeto: any = { RegistrosTotales: countg.length }
+                        let objeto: any = countg;
+                        // let objeto: any = { RegistrosTotales: countg.length }
                         resultado.push(objeto);
                     }
                     if (temporality == eTypeTemporalities.day) {
@@ -791,9 +794,9 @@ export class StatisticService {
                                 } 
                             }}];
                         countg = await this.statisticModel.aggregate(query);
+                        console.log(2, countg);
                         countg = countg.map( f =>{
                             let tmp = f;
-                        console.log(2, tmp);
                             if (typeof tmp?.users[0]?._id != 'undefined' ){
                             console.log(3);
 
