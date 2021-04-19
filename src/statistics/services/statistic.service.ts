@@ -31,7 +31,7 @@ export class StatisticService {
     }
     
     async save2( statistic: any): Promise<any> {
-        console.log(statistic);
+        // console.log(statistic);
         const dataUser:any = await this._jwtService.decode(statistic.token);
         delete statistic.token;
         if(typeof statistic.scheduleId != 'undefined'){
@@ -47,11 +47,11 @@ export class StatisticService {
             
             const createdstatistic = new this.statisticModel(statisticToSave);
             const r = await createdstatistic.save();
-            console.log(r);
+            // console.log(r);
             return r;
         } catch (error) {
             let message = error._message ?? error.toString()
-            console.log(error);
+            // console.log(error);
             return { error: message }
         }
     }
@@ -151,7 +151,9 @@ export class StatisticService {
                         resultado.push(objeto);
                     }
                     if (temporality == eTypeTemporalities.day) {
-                        query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, {'$match': {
+                        query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, {
+                            '$match': {
+                                type: 'Login',
                                 '$expr': {
                                     '$eq': [
                                         { "$dateToString": { format: "%Y-%m-%d", date: "$createdAt" }},
@@ -257,7 +259,9 @@ export class StatisticService {
                         resultado.push(objeto);
                     }
                     if (temporality == eTypeTemporalities.day) {
-                        query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, {'$match': {
+                        query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, {
+                            '$match': {
+                                type: 'Registro',
                                 '$expr': {
                                     '$eq': [
                                         { "$dateToString": { format: "%Y-%m-%d", date: "$createdAt" }},
@@ -306,11 +310,14 @@ export class StatisticService {
                     if (temporality == eTypeTemporalities.all) {
                         query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, { $match: { type: 'entrarSchundle' } }];
                         countg = await this.statisticModel.aggregate(query);
-                        let objeto: any = { RegistrosTotales: countg.length }
+                        let objeto: any = countg;
+                        // let objeto: any = { RegistrosTotales: countg.length }
                         resultado.push(objeto);
                     }
                     if (temporality == eTypeTemporalities.day) {
-                        query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, {'$match': {
+                        query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, {
+                            '$match': {
+                                type: 'entrarSchundle',
                                 '$expr': {
                                     '$eq': [
                                         { "$dateToString": { format: "%Y-%m-%d", date: "$createdAt" }},
@@ -395,7 +402,9 @@ export class StatisticService {
                         resultado.push(objeto);
                     }
                     if (temporality == eTypeTemporalities.day) {
-                        query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, {'$match': {
+                        query = [{ $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } }, {
+                            '$match': {
+                                type: 'entrarAgenda',
                                 '$expr': {
                                     '$eq': [
                                         { "$dateToString": { format: "%Y-%m-%d", date: "$createdAt" }},
@@ -513,6 +522,7 @@ export class StatisticService {
                                 $lookup: { from: 'schedules', localField: 'scheduleId', foreignField: '_id', as: 'schedules' } 
                             }
                             , {'$match': {
+                                type: 'entrarEvento',
                                 '$expr': {
                                     '$eq': [
                                         { "$dateToString": { format: "%Y-%m-%d", date: "$createdAt" }},
@@ -649,6 +659,7 @@ export class StatisticService {
                                 $lookup: { from: 'schedules', localField: 'scheduleId', foreignField: '_id', as: 'schedules' } 
                             }
                             , {'$match': {
+                                type: 'entrarVideo',
                                 '$expr': {
                                     '$eq': [
                                         { "$dateToString": { format: "%Y-%m-%d", date: "$createdAt" }},
@@ -777,7 +788,7 @@ export class StatisticService {
                         resultado.push(objeto);
                     }
                     if (temporality == eTypeTemporalities.day) {
-                        console.log(1);
+                        // console.log(1);
                         query = [
                             { 
                                 $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'users' } 
@@ -794,14 +805,14 @@ export class StatisticService {
                                 } 
                             }}];
                         countg = await this.statisticModel.aggregate(query);
-                        console.log(2, countg);
+                        // console.log(2, countg);
                         countg = countg.map( f =>{
                             let tmp = f;
                             if (typeof tmp?.users[0]?._id != 'undefined' ){
-                            console.log(3);
+                            // console.log(3);
 
                                 if (typeof tmp?.schedules[0]?._id != 'undefined' ){
-                                    console.log(4);
+                                    // console.log(4);
 
                                     
                                         return {
